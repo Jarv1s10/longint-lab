@@ -19,48 +19,61 @@ string zeropad(string numstr, int zeros, bool left)
 	return sign + numstr;
 }
 
-LongInt Mult::multiply(LongInt l1, LongInt l2)
+LongInt Mult::multiply(LongInt& l1, LongInt& l2)
 {
 	LongInt res;
 	return res;
 }
 
-LongInt Karatsuba::multiply(LongInt x, LongInt y)
+LongInt Karatsuba::multiply(LongInt& x, LongInt& y)
 {
 	string xnum = x.getnum(), ynum = y.getnum();
+	
 	if (x.len() < y.len())
-		xnum = zeropad(xnum, y.len() - x.len());
-	else if (y.len() < x.len())
-		ynum = zeropad(ynum, x.len() - y.len());
-	if (xnum.size() <= 10 || ynum.size() <= 10)
+		xnum = zeropad(xnum, ynum.size() - xnum.size());
+	else if (ynum.size() < xnum.size())
+		ynum = zeropad(ynum, xnum.size() - ynum.size());
+	
+
+	if (xnum.size() <= 2 && ynum.size() <= 2)
 	{
 		string reult = to_string(stoll(xnum) * stoll(ynum));
 		LongInt result = reult;
 		return result;
 	}
 	int n = xnum.size();
-	int j = n / 2;
-	if ((n % 2) != 0)
-		j += 1;
-	int bzeropad = n - j;
-	int azeropad = bzeropad * 2;
-	LongInt a = xnum.substr(0, j);
-	LongInt b = xnum.substr(j, n - j);
-	LongInt c = ynum.substr(0, j);
-	LongInt d = ynum.substr(j, n - j);
+	int fh=n/2; //first half
+	int sh = n - fh; //second half
 
-	LongInt ac = multiply(a, c);
-	LongInt bd = multiply(b, d);
-	LongInt k = multiply(a+b, c+d);
+	LongInt high1 = xnum.substr(0, fh);
+	LongInt low1 = xnum.substr(fh, sh);
+	LongInt high2 = ynum.substr(0, fh);
+	LongInt low2 = ynum.substr(fh, sh);
 
-	LongInt A = zeropad(ac.getnum(), azeropad, false);
-	LongInt buf = k-bd-ac;
-	LongInt B = zeropad(buf.getnum(), bzeropad, false);
+	LongInt z0= multiply(low1, low2);
+	LongInt z2 = multiply(high1, high2);
+	LongInt a_b = low1 + high1;
+	LongInt c_d = low2 + high2;
+	LongInt z1 = multiply(a_b, c_d);
+	LongInt buf =z1-z2-z0;
 
-	return A + B + ac;
+	z2 = zeropad(z2.getnum(), 2*(n-n/2), false);
+	buf = zeropad(buf.getnum(), n-n/2, false);
+
+	LongInt res = z2 + buf + z0;
+	
+	string r = res.getnum();
+	size_t begin = r.find_first_not_of("0");
+	if (begin != string::npos)
+	{
+		r = r.substr(begin, string::npos);
+	}
+	res = r;
+	
+	return res;
 }
 
-LongInt ToomCook::multiply(LongInt x, LongInt y)
+LongInt ToomCook::multiply(LongInt& x, LongInt& y)
 {
 	string xnum = x.getnum(), ynum = y.getnum();
 	
@@ -73,7 +86,7 @@ LongInt ToomCook::multiply(LongInt x, LongInt y)
 	else if (xnum.find('-') == string::npos && ynum.find('-') == 0)
 	{
 		sign = "-";
-		xnum.erase(0, 1);
+		ynum.erase(0, 1);
 	}
 	else if (xnum.find('-') == 0 && ynum.find('-') == 0)
 	{
@@ -145,3 +158,5 @@ LongInt ToomCook::multiply(LongInt x, LongInt y)
 
 	return res;
 }
+
+

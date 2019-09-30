@@ -1,5 +1,10 @@
 #include "Longint.h"
+
+#include "Mult.h"
+
 using namespace std;
+
+Mult* LongInt::mult = nullptr;
 
 string LongInt::findSum(string str1, string str2)
 {
@@ -86,6 +91,13 @@ bool LongInt::isSmaller(string str1, string str2)
 	return false;
 }
 
+string isZero(string s)
+{
+	if (s.find_first_not_of("0") == string::npos)
+		return "0";
+	return s.substr(s.find_first_not_of("0"), s.size());
+}
+
 string LongInt::findDiff(string str1, string str2)
 {
 	string sign = "";
@@ -108,6 +120,8 @@ string LongInt::findDiff(string str1, string str2)
 		str2.erase(0, 1);
 		return findDiff(str2, str1);
 	}
+	str1 = isZero(str1);
+	str2 = isZero(str2);
 	// Before proceeding further, make sure str1 
 	// is not smaller 
 	if (LongInt::isSmaller(str1, str2))
@@ -348,13 +362,13 @@ ostream& operator<<(ostream& o, const LongInt& obj)
 	return o;
 }
 
-LongInt LongInt::operator+(LongInt& l2)
+LongInt LongInt::operator+(const LongInt& l2)
 {
 	LongInt res(LongInt::findSum(this->num, l2.num));
 	return res;
 }
 
-LongInt LongInt::operator-(LongInt& l2)
+LongInt LongInt::operator-(const LongInt& l2)
 {
 	LongInt res(LongInt::findDiff(this->num, l2.num));
 	return res;
@@ -373,10 +387,15 @@ LongInt LongInt::operator/(int n)
 	return res;
 }
 
-/*
+LongInt LongInt::operator%(int n)
+{
+	LongInt division = longDivision(this->num, n);
+	LongInt res = *this - division * n;
+	return res;
+}
 LongInt LongInt::operator*(LongInt& other)
 {
 	return mult->multiply(*this, other);
 }
-*/
+
 
