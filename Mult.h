@@ -27,5 +27,27 @@ public:
 
 class Modular : public Mult
 {
-			
+public:
+	LongInt multiply(LongInt& x, LongInt& y) override;
+};
+
+class Schonhage : public Mult
+{
+public:
+	LongInt multiply(LongInt& x, LongInt& y) override;
+};
+
+class Reverse
+{
+public:
+	LongInt reverse(LongInt&);
+private:
+	std::string toBinary(LongInt&);
+	int len(LongInt& n);
+};
+
+class Division {
+	Reverse r;
+public:
+	LongInt divide(LongInt&, LongInt&);
 };

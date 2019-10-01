@@ -124,7 +124,7 @@ string LongInt::findDiff(string str1, string str2)
 	str2 = isZero(str2);
 	// Before proceeding further, make sure str1 
 	// is not smaller 
-	if (LongInt::isSmaller(str1, str2))
+	if (isSmaller(str1, str2))
 	{
 		swap(str1, str2);
 		sign = "-";
@@ -393,9 +393,29 @@ LongInt LongInt::operator%(int n)
 	LongInt res = *this - division * n;
 	return res;
 }
+
+LongInt LongInt::operator+(int n) 
+{
+	LongInt res(n);
+	return res + *this;
+}
+
+bool LongInt::operator<=(const LongInt& other)
+{
+	if (this->num == other.num)
+		return true;
+	return isSmaller(this->num, other.num);
+}
+
 LongInt LongInt::operator*(LongInt& other)
 {
 	return mult->multiply(*this, other);
+}
+
+LongInt LongInt::operator/(LongInt& other)
+{
+	Division d;
+	return d.divide(*this, other);
 }
 
 

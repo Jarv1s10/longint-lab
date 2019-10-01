@@ -159,4 +159,104 @@ LongInt ToomCook::multiply(LongInt& x, LongInt& y)
 	return res;
 }
 
+LongInt Schonhage::multiply(LongInt& x, LongInt& y)
+{
+	string xnum = x.getnum(), ynum = y.getnum();
+	const long n = xnum.size(), m = ynum.size();
+	vector<LongInt> linconv(n+m-1, 0);
+
+	for(int i = 0; i <n; i++)
+	{
+		for(int j =0; j <m; j++)
+		{
+			linconv[i + j] = linconv[i + j]+(xnum[i] - 48) * (ynum[j] - 48);
+		}
+	}
+
+	int carry = 0, base = 0;
+	string cur, res="";
+	for (int i = n+m-2; i >=0; i--)
+	{
+		linconv[i] = linconv[i] + carry;
+		cur = linconv[i].getnum();
+		if (cur.size() < 2)
+		{
+			carry = 0;
+			res = cur + res;
+		}
+		else
+		{
+			carry = cur[0] - 48;
+			res = cur.substr(1, string::npos) + res;
+		}
+	}
+	LongInt product = res;
+	return product;
+}
+
+string Reverse::toBinary(LongInt& n)
+{
+	std::string r="";
+	while(n.getnum()!=string("1"))
+	{
+		int d = n.getnum()[n.len()-1] - 48;
+		if (d % 2)
+			r = "1" + r;
+		else
+			r = "0" + r;
+		n = n / 2;
+	}
+	r = "1" + r;
+	return r;
+}
+
+int Reverse::len(LongInt& n)
+{
+	n = toBinary(n);
+	if (isZero(n.getnum()) == string("0"))
+		return 0;
+	return n.len();
+}
+
+LongInt Reverse::reverse(LongInt& x)
+{
+	LongInt x_ = x - 1;
+	int b = len(x_);
+	LongInt r = to_string(int(pow(2, b)));
+	LongInt s = r;
+	long long b2 = pow(2, b);
+
+	ToomCook tc;
+	LongInt::setmult(&tc);
+
+	while (true)
+	{
+		LongInt r1 = r * r / b2;
+		r1 = x * r1 / b2;
+		r = r * 2 - r1;
+		if (r <= s)
+			break;
+		s = r;
+	}
+	
+	LongInt b4 = to_string(int(pow(4, b)));
+	LongInt y = b4 - x * r;
+	while (y.getnum().substr(0,1)==string("-"))
+	{
+		r = r - 1;
+		y = y + x;
+	}
+	return r;
+}
+
+LongInt Division::divide(LongInt& x, LongInt& y)
+{
+	y = r.reverse(y);
+	ToomCook tc;
+	LongInt::setmult(&tc);
+
+	return x * y;
+}
+
+
 
