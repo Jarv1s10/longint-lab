@@ -1,38 +1,23 @@
 #include "Mult.h"
 using namespace std;
 
-string zeropad(string numstr, int zeros, bool left)
-{
-	string sign = "";
-	if (numstr.find("-") == 0)
-	{
-		sign = "-";
-		numstr.erase(0, 1);
-	}
-	for (int i = 0; i < zeros; i++)
-	{
-		if (left)
-			numstr = "0" + numstr;
-		else
-			numstr += "0";
-	}
-	return sign + numstr;
-}
 
-LongInt Mult::multiply(LongInt& l1, LongInt& l2)
+LongInt Mult::multiply(LongInt l1, LongInt l2)
 {
 	LongInt res;
 	return res;
 }
 
-LongInt Karatsuba::multiply(LongInt& x, LongInt& y)
+
+//1st algorithm
+LongInt Karatsuba::multiply(LongInt x, LongInt y)
 {
 	string xnum = x.getnum(), ynum = y.getnum();
 	
 	if (x.len() < y.len())
-		xnum = zeropad(xnum, ynum.size() - xnum.size());
+		xnum = zeropad(xnum, ynum.size() - xnum.size(), true);
 	else if (ynum.size() < xnum.size())
-		ynum = zeropad(ynum, xnum.size() - ynum.size());
+		ynum = zeropad(ynum, xnum.size() - ynum.size(), true);
 	
 
 	if (xnum.size() <= 2 && ynum.size() <= 2)
@@ -73,7 +58,9 @@ LongInt Karatsuba::multiply(LongInt& x, LongInt& y)
 	return res;
 }
 
-LongInt ToomCook::multiply(LongInt& x, LongInt& y)
+
+//2nd agorithm
+LongInt ToomCook::multiply(LongInt x, LongInt y)
 {
 	string xnum = x.getnum(), ynum = y.getnum();
 	
@@ -159,7 +146,9 @@ LongInt ToomCook::multiply(LongInt& x, LongInt& y)
 	return res;
 }
 
-LongInt Schonhage::multiply(LongInt& x, LongInt& y)
+
+//4th algorithm
+LongInt Schonhage::multiply(LongInt x, LongInt y)
 {
 	string xnum = x.getnum(), ynum = y.getnum();
 	const long n = xnum.size(), m = ynum.size();
@@ -194,69 +183,250 @@ LongInt Schonhage::multiply(LongInt& x, LongInt& y)
 	return product;
 }
 
-string Reverse::toBinary(LongInt& n)
-{
-	std::string r="";
-	while(n.getnum()!=string("1"))
-	{
-		int d = n.getnum()[n.len()-1] - 48;
-		if (d % 2)
-			r = "1" + r;
-		else
-			r = "0" + r;
-		n = n / 2;
-	}
-	r = "1" + r;
-	return r;
-}
 
-int Reverse::len(LongInt& n)
+//5th algorithm
+LongInt Reverse::rev(LongInt x)
 {
-	n = toBinary(n);
-	if (isZero(n.getnum()) == string("0"))
-		return 0;
-	return n.len();
-}
-
-LongInt Reverse::reverse(LongInt& x)
-{
-	LongInt x_ = x - 1;
-	int b = len(x_);
-	LongInt r = to_string(int(pow(2, b)));
-	LongInt s = r;
-	long long b2 = pow(2, b);
-
 	ToomCook tc;
-	LongInt::setmult(&tc);
+	LongInt xb = toBinary(x);
+	LongInt b = binarylength(substractBinary(xb.getnum(), "1"));
+	LongInt r = powbase(LongInt(2), b);
+	LongInt s = toBinary(r);
+	LongInt b2 = toBinary(r);
+	LongInt tmp;
 
 	while (true)
 	{
-		LongInt r1 = r * r / b2;
-		r1 = x * r1 / b2;
-		r = r * 2 - r1;
+		tmp = toBinary(tc.multiply(r, r));
+		tmp = toDecimal(binarydiv(tmp, b2));
+		tmp = toBinary(tc.multiply(x, tmp));
+		tmp = binarydiv(tmp, b2);
+		r = toBinary(r*2);
+		r = substractBinary(r.getnum(), tmp.getnum());
 		if (r <= s)
 			break;
 		s = r;
+		r = toDecimal(r);
 	}
-	
-	LongInt b4 = to_string(int(pow(4, b)));
-	LongInt y = b4 - x * r;
-	while (y.getnum().substr(0,1)==string("-"))
+	tmp = toDecimal(r);
+	tmp = toBinary(tc.multiply(x, tmp));
+	LongInt y = toBinary(powbase(LongInt(4), b));
+	y = substractBinary(y.getnum(), tmp.getnum());
+	LongInt zero;
+	while (y<zero)
 	{
-		r = r - 1;
-		y = y + x;
+		r = substractBinary(r.getnum(), "1");
+		y = addBinary(y.getnum(), xb.getnum());
 	}
-	return r;
+	return toDecimal(r);
 }
 
-LongInt Division::divide(LongInt& x, LongInt& y)
+
+//6th algorithm
+LongInt Division::divide(LongInt x, LongInt y)
 {
-	y = r.reverse(y);
-	ToomCook tc;
-	LongInt::setmult(&tc);
-
-	return x * y;
+	LongInt res;
+	return res;
 }
+
+
+//7th algorithm
+LongInt Fermat::power(LongInt a, LongInt n, LongInt p)
+{
+	LongInt res=1, zero;
+	ToomCook tc;
+	a = a % p;
+
+	while (zero < n)
+	{
+		if (n % 2 == zero)
+			res = tc.multiply(res, a) % p;
+		n = n / 2;
+		a = tc.multiply(a, a) % p;
+	}
+	return res;
+}
+
+LongInt Fermat::gcd(LongInt a, LongInt b)
+{
+	LongInt zero;
+	if (a < b)
+		return gcd(b, a);
+	else if (a % b == zero)
+		return b;
+	else
+		return gcd(b, a % b);
+}
+
+bool Fermat::isprime(LongInt n)
+{
+	LongInt one = 1, four = 4;
+	if (n <= one || n == four)
+		return false;
+	if (n < four)
+		return true;
+	LongInt rnd, a;
+	while (k > 0)
+	{
+		a = n - 4;
+		rnd = rand();
+		a = LongInt(2) + rnd % a;
+
+		if (gcd(n, a) != LongInt(1))
+			return false;
+
+		if (power(a, n - 1, n) != LongInt(1))
+			return false;
+		k--;
+	}
+	return true;
+}
+
+
+//8th algorithm
+LongInt MilRab::power(LongInt a, LongInt n, LongInt p)
+{
+	LongInt res = 1, zero;
+	ToomCook tc;
+	a = a % p;
+
+	while (zero < n)
+	{
+		if (n % 2 == zero)
+			res = tc.multiply(res, a) % p;
+		n = n / 2;
+		a = tc.multiply(a, a) % p;
+	}
+	return res;
+}
+
+bool MilRab::millerTest(LongInt d, LongInt n) 
+{
+	ToomCook tc;
+	LongInt a=n-4, rnd=rand();
+	a = LongInt(2) + rnd % a;
+
+	LongInt x = power(a, d, n);
+
+	if (x == LongInt(1) || x == LongInt(n - 1))
+		return true;
+
+	while (d != n - 1)
+	{
+		x = tc.multiply(x, x) % n;
+		d = d * 2;
+		if (x == LongInt(1))
+			return false;
+		if (x == LongInt(n - 1))
+			return true;
+	}
+	return false;
+}
+
+bool MilRab::isprime(LongInt n)
+{
+	if (n <= LongInt(1) || n == LongInt(4))
+		return false;
+	if (n < LongInt(4))
+		return true;
+
+	LongInt d = n - 1;
+	while (d % 2 == LongInt(0))
+		d = d / 2;
+
+	for (int i = 0; i < k; i++)
+	{
+		if (!millerTest(d, n))
+			return false;
+	}
+	return true;
+}
+
+
+//9th algorithm
+LongInt SolStr::modulo(LongInt base, LongInt exponent, LongInt mod)
+{
+	ToomCook tc;
+	LongInt x = 1, y = base, zero;
+	while (zero < exponent)
+	{
+		if (exponent % 2 == LongInt(1))
+			x = tc.multiply(x, y) % mod;
+
+		y = tc.multiply(y, y) % mod;
+		exponent = exponent / 2;
+	}
+	return x % mod;
+}
+
+LongInt SolStr::calculateJacodian(LongInt a, LongInt n)
+{
+	ToomCook tc;
+	LongInt zero;
+	if (a == zero)
+		return zero;
+
+	LongInt res(1);
+	if (a < zero)
+	{
+		tc.multiply(a, LongInt(-1));
+		if (n % 4 == 3)
+			res = tc.multiply(res, LongInt(-1));
+	}
+	if (a == 1)
+		return res;
+
+	while (a != zero)
+	{
+		if (a < zero)
+		{
+			tc.multiply(a, LongInt(-1));
+			if (n % 4 == 3)
+				res = tc.multiply(res, LongInt(-1));
+		}
+		while (a % 2 == zero)
+		{
+			a = a / 2;
+			if (n % 8 == LongInt(3) || n % 8 == LongInt(5))
+				res = tc.multiply(res, LongInt(-1));
+		}
+		swap(a, n);
+
+		if (a % 4 == LongInt(3) && n % 4 == LongInt(3))
+			res = tc.multiply(res, LongInt(-1));
+		a = a % n;
+
+		if (n / 2 < a)
+			a = a - n;
+	}
+	if (n == LongInt(1))
+		return res;
+
+	return zero;
+}
+
+bool SolStr::isprime(LongInt p)
+{
+	LongInt zero;
+	if (p < LongInt(2))
+		return false;
+	if (p != LongInt(2) && p % 2 == zero)
+		return false;
+	LongInt rnd = rand(), a, jacobian, mod;
+	for (int i = 0; i < iterations; i++)
+	{
+		a = p - 1;
+		a = rnd % a + 1;
+		jacobian = p + calculateJacodian(a, p);
+		jacobian = jacobian % p;
+		mod = modulo(a, (p - 1) / 2, p);
+
+		if (jacobian != zero || mod != jacobian)
+			return false;
+	}
+	return true;
+}
+
 
 
 
