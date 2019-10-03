@@ -5,8 +5,8 @@ using namespace std;
 
 int main()
 {
-	LongInt l1("10");
-	LongInt l2("1000000");
+	LongInt l1("222222222");
+	LongInt l2("12567890");
 	ToomCook tc;
 	Karatsuba kr;
 	Schonhage sch;
@@ -24,8 +24,7 @@ int main()
 	LongInt::setmult(&sch);
 	cout << l1 * l2 << endl;
 	//5th
-	LongInt l1r = re.rev(l1);
-	cout << l1r << endl;
+	cout << l1.rev() << endl;
 	//7th
 	cout << fr.isprime(l1) << endl;
 	//8th

@@ -67,7 +67,7 @@ public:
 //7th algorthm
 class Fermat
 {
-	int k=10;
+	int k=100;
 	LongInt power(LongInt a, LongInt n, LongInt p);
 	LongInt gcd(LongInt a, LongInt b);
 public:
@@ -78,7 +78,7 @@ public:
 //8th algorithm
 class MilRab
 {
-	int k = 10;
+	int k = 100;
 	LongInt power(LongInt a, LongInt n, LongInt p);
 	bool millerTest(LongInt d, LongInt n);
 public:

@@ -6,6 +6,11 @@ using namespace std;
 
 Mult* LongInt::mult = nullptr;
 
+LongInt LongInt::rev()
+{
+	Reverse r;
+	return toDecimal(r.rev(*this));
+}
 
 LongInt::LongInt()
 {
@@ -658,6 +663,8 @@ string school_multiply(string num1, string num2)
 
 string longDivision(string number, int divisor)
 {
+	if(LongInt(number)<LongInt(divisor))
+		return "0";
 	string sign = "";
 	if (number.find('-') == 0)
 	{

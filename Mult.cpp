@@ -218,7 +218,7 @@ LongInt Reverse::rev(LongInt x)
 		r = substractBinary(r.getnum(), "1");
 		y = addBinary(y.getnum(), xb.getnum());
 	}
-	return toDecimal(r);
+	return r;
 }
 
 
@@ -233,13 +233,13 @@ LongInt Division::divide(LongInt x, LongInt y)
 //7th algorithm
 LongInt Fermat::power(LongInt a, LongInt n, LongInt p)
 {
-	LongInt res=1, zero;
+	LongInt res=1, zero, two=2;
 	ToomCook tc;
 	a = a % p;
 
 	while (zero < n)
 	{
-		if (n % 2 == zero)
+		if (n % two == zero)
 			res = tc.multiply(res, a) % p;
 		n = n / 2;
 		a = tc.multiply(a, a) % p;
