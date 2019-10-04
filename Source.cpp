@@ -5,31 +5,35 @@ using namespace std;
 
 int main()
 {
-	LongInt l1("17");
-	LongInt l2("12567890");
+	LongInt l1("192857");
+	LongInt l2("12345678910");
 	ToomCook tc;
 	Karatsuba kr;
-	Schonhage sch;
-	Reverse re;
+	Strassen sch;
 	Fermat fr;
 	MilRab mr;
 	SolStr ss;
-	//1st
-	LongInt::setmult(&tc);
-	cout << l1 * l2 << endl;
-	//2nd
+	cout << "1st" << endl;
 	LongInt::setmult(&kr);
 	cout << l1 * l2 << endl;
-	//4th
+	cout << "2nd" << endl;
+	LongInt::setmult(&tc);
+	cout << l1 * l2 << endl;
+	cout << "4th" << endl;
 	LongInt::setmult(&sch);
 	cout << l1 * l2 << endl;
-	//5th
-	cout << l1.rev() * l1 << endl;
-	//7th
+	cout << "5th" << endl;
+	cout << l1.rev()<< endl;
+	cout << "6th" << endl;
+	Division d;
+	cout << toDecimal(d.divide(l2, l1)) << endl;
+	cout << l2 / l1 << endl;
+	
+	cout << "7th" << endl;
 	cout << fr.isprime(l1) << endl;
-	//8th
+	cout << "8th" << endl;
 	cout << mr.isprime(l1) << endl;
-	//9th
+	cout << "9th" << endl;
 	cout << ss.isprime(l1) << endl;
 	
 	return 0;

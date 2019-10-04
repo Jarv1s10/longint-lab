@@ -41,7 +41,7 @@ public:
 
 
 //4th algorithm
-class Schonhage : public Mult
+class Strassen : public Mult
 {
 public:
 	LongInt multiply(LongInt, LongInt) override;
@@ -67,7 +67,7 @@ public:
 //7th algorthm
 class Fermat
 {
-	int k=100;
+	int k=20;
 	LongInt power(LongInt a, LongInt n, LongInt p);
 	LongInt gcd(LongInt a, LongInt b);
 public:
@@ -78,7 +78,7 @@ public:
 //8th algorithm
 class MilRab
 {
-	int k = 100;
+	int k = 20;
 	LongInt power(LongInt a, LongInt n, LongInt p);
 	bool millerTest(LongInt d, LongInt n);
 public:
@@ -89,7 +89,7 @@ public:
 //9th algorithm
 class SolStr
 {
-	int iterations = 50;
+	int iterations = 20;
 	LongInt modulo(LongInt, LongInt, LongInt);
 	LongInt calculateJacodian(LongInt, LongInt);
 public:

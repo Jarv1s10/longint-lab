@@ -136,8 +136,11 @@ LongInt LongInt::operator*(LongInt& other)
 
 LongInt LongInt::operator/(LongInt& other)
 {
-	LongInt res;
-	return res;
+	/*Division d;
+	return toDecimal(d.divide(*this, other));*/
+	LongInt a = toBinary(*this);
+	LongInt b = toBinary(other);
+	return toDecimal(binarydiv(a, b));
 }
 
 LongInt LongInt::operator%(LongInt& other)
@@ -309,12 +312,12 @@ LongInt powbase(LongInt base, LongInt power)
 	return res;
 }
 
-LongInt binarylength(LongInt n)
+int binarylength(LongInt n)
 {
-	LongInt res;
+	int res;
 	if (isZero(n.getnum()) == string("0"))
-		return res;
-	res = to_string(n.len());
+		return 0;
+	res = n.len();
 	return res;
 }
 
@@ -350,13 +353,14 @@ LongInt toDecimal(LongInt bin)
 		bin = bin.getnum().substr(1, string::npos);
 		sign = "-";
 	}
-	LongInt res;
+	LongInt res, tmp;
 	int indcount = 0;
 	for (int i = bin.len() - 1; i >= 0; i--)
 	{
 		if (bin.getnum()[i] == '1')
 		{
-			res = res + LongInt(int(pow(2, indcount)));
+			//tmp = zeropad("1", indcount, false);
+			res = res + powbase(LongInt(2), LongInt(indcount));
 		}
 		indcount++;
 	}
@@ -441,11 +445,10 @@ string findSum(string str1, string str2)
 	if (carry)
 		str.push_back(carry + '0');
 
-	str += sign;
 	// reverse resultant string 
 	reverse(str.begin(), str.end());
-
-	return str;
+	str = isZero(str);
+	return sign + str;
 }
 
 bool isSmaller(string str1, string str2)
@@ -564,11 +567,10 @@ string findDiff(string str1, string str2)
 
 		str.push_back(sub + '0');
 	}
-	str += sign;
 	// reverse resultant string 
 	reverse(str.begin(), str.end());
-
-	return str;
+	str = isZero(str);
+	return sign + str;
 }
 
 string school_multiply(string num1, string num2)
@@ -589,9 +591,11 @@ string school_multiply(string num1, string num2)
 		num1.erase(0, 1);
 		num2.erase(0, 1);
 	}
+	num1 = isZero(num1);
+	num2 = isZero(num2);
 	int len1 = num1.size();
 	int len2 = num2.size();
-	if (len1 == 0 || len2 == 0)
+	if (num1 == "0" || num2 == "0")
 		return "0";
 
 	// will keep the result number in vector 
@@ -657,20 +661,20 @@ string school_multiply(string num1, string num2)
 
 	while (i >= 0)
 		s += std::to_string(result[i--]);
-
+	s = isZero(s);
 	return sign + s;
 }
 
 string longDivision(string number, int divisor)
 {
-	if(LongInt(number)<LongInt(divisor))
-		return "0";
 	string sign = "";
 	if (number.find('-') == 0)
 	{
 		sign = "-";
 		number.erase(0, 1);
 	}
+	if(LongInt(number)<LongInt(divisor))
+		return "0";
 
 	// As result can be very large store it in string 
 	string ans;
@@ -721,4 +725,12 @@ LongInt binarydiv(LongInt x, LongInt n)
 		m = m.getnum().substr(0, m.len() - 1);
 	}
 	return c;
+}
+
+LongInt binarymult(LongInt a, LongInt b)
+{
+	ToomCook tc;
+	a = toDecimal(a);
+	b = toDecimal(b);
+	return toBinary(tc.multiply(a, b));
 }

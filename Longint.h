@@ -30,6 +30,7 @@ public:
 	bool operator==(const LongInt&);
 	bool operator!=(const LongInt&);
 	bool operator<(const LongInt&);
+	//operator string();
 	LongInt rev();
 	static void setmult(Mult* m) { mult = m; }
 	int len() { return this->num.length(); }
@@ -49,7 +50,7 @@ private:
 
 std::string isZero(std::string);
 LongInt powbase(LongInt, LongInt);
-LongInt binarylength(LongInt);
+int binarylength(LongInt);
 std::string toBinary(LongInt);
 std::string zeropad(std::string, int, bool);
 std::string findSum(std::string, std::string);
@@ -62,3 +63,4 @@ LongInt binarydiv(LongInt, LongInt);
 std::string substractBinary(std::string str1, std::string str2);
 std::string addBinary(std::string, std::string);
 LongInt toDecimal(LongInt);
+LongInt binarymult(LongInt, LongInt);
