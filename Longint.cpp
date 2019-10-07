@@ -165,6 +165,12 @@ LongInt LongInt::operator%(LongInt& other)
 
 
 
+
+
+
+
+
+
 string addBinary(string a, string b)
 {
 	string sign = "";

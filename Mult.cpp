@@ -1,6 +1,6 @@
 #include "Mult.h"
 using namespace std;
-
+typedef complex<double> base;
 
 LongInt Mult::multiply(LongInt l1, LongInt l2)
 {
@@ -156,30 +156,72 @@ LongInt ToomCook::multiply(LongInt x, LongInt y)
 
 
 //4th algorithm
+void fft(vector<base>& a, bool invert) 
+{
+	int n = (int)a.size();
+	if (n == 1)  return;
+
+	vector<base> a0(n / 2), a1(n / 2);
+	for (int i = 0, j = 0; i < n; i += 2, ++j) {
+		a0[j] = a[i];
+		a1[j] = a[i + 1];
+	}
+	fft(a0, invert);
+	fft(a1, invert);
+
+	double ang = 2 * M_PI / n * (invert ? -1 : 1);
+	base w(1);
+	base wn(cos(ang), sin(ang));
+	for (int i = 0; i < n / 2; ++i) {
+		a[i] = a0[i] + w * a1[i];
+		a[i + n / 2] = a0[i] - w * a1[i];
+		if (invert)
+			a[i] /= 2, a[i + n / 2] /= 2;
+		w *= wn;
+	}
+}
+void mult(const vector<int>& a, const vector<int>& b, vector<int>& res) 
+{
+	vector<base> fa(a.begin(), a.end()), fb(b.begin(), b.end());
+	size_t n = 1;
+	while (n < max(a.size(), b.size()))  n <<= 1;
+	n <<= 1;
+	fa.resize(n), fb.resize(n);
+
+	fft(fa, false), fft(fb, false);
+	for (size_t i = 0; i < n; ++i)
+		fa[i] *= fb[i];
+	fft(fa, true);
+
+	res.resize(n);
+	for (size_t i = 0; i < n; ++i)
+		res[i] = int(fa[i].real() + 0.5);
+}
 LongInt Strassen::multiply(LongInt x, LongInt y)
 {
 	string xnum = x.getnum(), ynum = y.getnum();
 	const long n = xnum.size(), m = ynum.size();
-	vector<int> linconv(n+m-1, 0);
-
-	for(int i=0;i<n;i++)
+	vector<int> a(n, 0), b(m,0), resvect;
+	for (int i = 0; i < n; i++)
 	{
-		for(int j=0;j<m;j++)
-		{
-			linconv[i + j] +=(xnum[i] - '0') * (ynum[j] - '0');
-		}
+		a[i] = xnum[i] - 48;
 	}
+	for (int j = 0; j < m; j++)
+	{
+		b[j] = ynum[j] - 48;
+	}
+	mult(a, b, resvect);
 
-	int carry = 0, base = 1;
+	int carry = 0;
 	string res="";
-	for (int i = n+m-2;i>=0;i--)
-	{
-		linconv[i] += carry;
-		res = to_string(linconv[i] % 10)+res;
-		carry = linconv[i] / 10;
-		base *= 10;
+	resvect.resize(n + m - 1);
+	for (size_t i = n+m-2; i >0; --i) {
+		resvect[i] += carry;
+		carry = resvect[i] / 10;
+		resvect[i] %= 10;
+		res = to_string(resvect[i])+res;
 	}
-	return res;
+	return to_string(resvect[0])+res;
 }
 
 

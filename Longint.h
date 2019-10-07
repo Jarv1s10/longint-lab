@@ -30,7 +30,6 @@ public:
 	bool operator==(const LongInt&);
 	bool operator!=(const LongInt&);
 	bool operator<(const LongInt&);
-	//operator string();
 	LongInt rev();
 	static void setmult(Mult* m) { mult = m; }
 	int len() { return this->num.length(); }
@@ -40,6 +39,8 @@ private:
 	static Mult* mult;
 	std::string num;
 };
+
+
 
 
 

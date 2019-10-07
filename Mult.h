@@ -1,13 +1,11 @@
 #pragma once
-
+#define _USE_MATH_DEFINES
 #include "Longint.h"
 #include <cmath>
 #include <stdlib.h>
 #include <stdio.h>
-
-//std::string zeropad(std::string numstr, int zeros, bool left = true);
-//std::string toBinary(LongInt);
-//LongInt len(LongInt);
+#include <complex>
+#include <algorithm>
 
 class Mult
 {
